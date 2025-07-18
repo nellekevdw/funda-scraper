@@ -252,7 +252,7 @@ class FundaScraper(object):
 
         try:
             json_data = json.loads(script_tag.string)
-            urls = [item["url"] for item in json_data.get("itemListElement", [])]
+            urls = [str(item["url"]).replace("/en/en/", "/en/") for item in json_data.get("itemListElement", [])]
         except (json.JSONDecodeError, KeyError, TypeError) as e:
             raise ValueError(f"Failed to parse JSON data: {e}")
 
@@ -390,6 +390,7 @@ class FundaScraper(object):
     def scrape_one_link(self, link: str) -> List[str]:
         """Scrapes data from a single property link."""
 
+        logger.info(link)
         # Fetch page content safely
         soup = self._get_soup(self.requests_session, link)
         if not soup:
@@ -452,7 +453,7 @@ class FundaScraper(object):
             status = "unavailable" if self.find_past else "unavailable"
             want_to = "buy" if self.to_buy else "rent"
             filepath = f"./data/houseprice_{date}_{self.area}_{want_to}_{status}_{len(self.links)}.csv"
-        df.to_csv(filepath, index=False)
+        df.to_csv(filepath, index=False, sep = ";")
         logger.info(f"*** File saved: {filepath}. ***")
 
 

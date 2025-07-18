@@ -13,7 +13,7 @@ from funda_scraper.config.core import config
 def clean_price(x: str) -> int:
     """Clean the 'price' and transform from string to integer."""
     try:
-        return int(str(x).split(" ")[1].replace(".", ""))
+        return int(str(x).split(" ")[1].replace(",", ""))
     except ValueError:
         return 0
     except IndexError:
@@ -168,12 +168,12 @@ def preprocess_data(
         keep_cols.extend(keep_extra_cols)
 
     # Info
-    df["house_id"] = df["url"].apply(lambda x: int(x.split("/")[-2].split("-")[1]))
-    df["house_type"] = df["url"].apply(lambda x: x.split("/")[-2].split("-")[0])
+    df["house_id"] = df["url"].apply(lambda x: int(x.split("/")[-2]))
+    df["house_type"] = df["url"].apply(lambda x: x.split("/")[-3].split("-")[0])
     df = df[df["house_type"].isin(["appartement", "huis"])]
 
     # Price
-    price_col = "price_sold" if is_past else "price"
+    price_col = "last_ask_price" if is_past else "asking_price"
     df["price"] = df[price_col].apply(clean_price)
     df = df[df["price"] != 0]
     df["living_area"] = df["living_area"].apply(clean_living_area)
@@ -190,7 +190,7 @@ def preprocess_data(
     df["energy_label"] = df["energy_label"].apply(clean_energy_label)
 
     # Time
-    df["year_built"] = df["year"].apply(clean_year).astype(int)
+    df["year_built"] = df["construction_year"].apply(clean_year).astype(int)
     df["house_age"] = datetime.now().year - df["year_built"]
 
     if is_past:
