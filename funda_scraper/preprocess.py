@@ -138,7 +138,7 @@ def clean_date_format(x: str) -> Union[datetime, str]:
         elif x.find("day") != -1:
             x = delta_now(int(x.split("day")[0].strip()))
         else:
-            x = datetime.strptime(x, "%d %B %Y")
+            x = datetime.strptime(x, "%B %d, %Y")
         return x
 
     except ValueError:
@@ -190,13 +190,17 @@ def preprocess_data(
     df["energy_label"] = df["energy_label"].apply(clean_energy_label)
 
     # Time
-    df["year_built"] = df["construction_year"].apply(clean_year).astype(int)
+    df["construction_period"] = df.apply(
+        lambda row: row["construction_period"] if row["construction_period"] != "na" else row["construction_year"], axis=1
+    )
+    df["year_built"] = df["construction_period"].apply(clean_year).astype(int)
+    #df["year_built"] = df["construction_year"].apply(lambda x: df["construction_year"] if df["construction_year"] != 0 else df["construction_period"])
     df["house_age"] = datetime.now().year - df["year_built"]
 
     if is_past:
         # Only check past data
-        df = df[df["date_sold"] != "na"]
-        df["date_sold"] = df["date_sold"].apply(clean_date_format)
+        df = df[df["sale_date"] != "na"]
+        df["date_sold"] = df["sale_date"].apply(clean_date_format)
         df = df.dropna()
         df["date_sold"] = pd.to_datetime(df["date_sold"])
         df["ym_sold"] = df["date_sold"].apply(lambda x: x.to_period("M").to_timestamp())

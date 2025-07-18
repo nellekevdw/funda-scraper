@@ -450,7 +450,7 @@ class FundaScraper(object):
         if filepath is None:
             self._check_dir()
             date = str(datetime.datetime.now().date()).replace("-", "")
-            status = "unavailable" if self.find_past else "unavailable"
+            status = "unavailable" if self.find_past else "available"
             want_to = "buy" if self.to_buy else "rent"
             filepath = f"./data/houseprice_{date}_{self.area}_{want_to}_{status}_{len(self.links)}.csv"
         df.to_csv(filepath, index=False, sep = ";")

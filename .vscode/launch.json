@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "fundascraper.py",
             "console": "integratedTerminal",
-            "args": "--area amsterdam --want_to buy --page_start 1 --n_pages 1 --save"
+            "args": "--area dieren --want_to buy --page_start 1 --n_pages 1 --save"
         }
     ]
 }
