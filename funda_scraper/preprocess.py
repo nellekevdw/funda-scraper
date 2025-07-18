@@ -26,7 +26,9 @@ def clean_year(x: str) -> int:
         return int(x)
     elif x.find("-") != -1:
         return int(x.split("-")[0])
-    elif x.find("before") != -1:
+    elif x.find("Before") != -1:
+        return int(x.split(" ")[1])
+    elif x.find("After") != -1:
         return int(x.split(" ")[1])
     else:
         return 0

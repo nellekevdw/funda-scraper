@@ -248,7 +248,7 @@ class FundaScraper(object):
         # Find housing links
         script_tag = soup.find("script", {"type": "application/ld+json"})
         if script_tag is None or not script_tag.contents:
-            raise ValueError("No JSON-LD script tag found on the page")
+            raise IndexError("No JSON-LD script tag found on the page")
 
         try:
             json_data = json.loads(script_tag.string)
@@ -390,7 +390,6 @@ class FundaScraper(object):
     def scrape_one_link(self, link: str) -> List[str]:
         """Scrapes data from a single property link."""
 
-        logger.info(link)
         # Fetch page content safely
         soup = self._get_soup(self.requests_session, link)
         if not soup:
